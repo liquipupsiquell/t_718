@@ -336,24 +336,26 @@ class Update
             string[] arguments = arg.NoTInfo;
             Excel.Application xlApp = new Microsoft.Office.Interop.Excel.Application();//Подклюаем Excel
             Excel.Workbook xlWorkBook;
-            FileInfo fi = new FileInfo("D:\\" + arg.NoTInfo[0] + ".xlsx");//Проверяем есть ли файл с таким же названием, если да то выведит ошибку, т.к. БД уже сществует
-            if (fi.Exists)
+            //FileInfo fi = new FileInfo("D:\\" + arg.NoTInfo[0] + ".xlsx");//Проверяем есть ли файл с таким же названием, если да то выведит ошибку, т.к. БД уже сществует
+            //if (fi.Exists)
+            //{
+            //    xlWorkBook = xlApp.Workbooks.Open(@"D:\" + arg.NoTInfo[0] + ".xlsx");
+            //}
+            //else
+            //{
+            //    Console.WriteLine("File is not!");
+            //    return;
+            //}
+            
+            try
             {
                 xlWorkBook = xlApp.Workbooks.Open(@"D:\" + arg.NoTInfo[0] + ".xlsx");
             }
-            else
+            catch (IOException e)
             {
-                Console.WriteLine("File is not!");
+                Console.WriteLine(e.Message);
                 return;
             }
-            //try
-            //{
-            //    FileInfo fi = new FileInfo("D:\\" + arg.NoTInfo[0] + ".xlsx");
-            //}
-            //catch (IOException e)
-            //{
-            //    Console.WriteLine(e.Message);
-            //}
             var xlSheets = xlWorkBook.Sheets as Excel.Sheets;
             Excel.Worksheet ObjWorkSheet = (Excel.Worksheet)xlWorkBook.Sheets[Convert.ToString(arguments[1])]; //получить 1 лист
             var lastCell = ObjWorkSheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell);//1 ячейку
@@ -362,36 +364,70 @@ class Update
                 for (int j = 0; j < lastCell.Row; j++) // по всем строкам
                     list[i, j] = ObjWorkSheet.Cells[i + 1, j + 1].Text.ToString();//считываем текст в строку
 
-            string tempstr = "";
+            string tempstr = "";string TypeText = "";
             int ii = lastCell.Row+1, jj = 1;
-
+            int check = 0;
                 foreach (string k in arguments)
                 {
                 if (k == arguments[0] || k == arguments[1]) continue;
                 try
                 {
+                    
                     if (jj > lastCell.Column) { Console.WriteLine("Error syntax"); return; }
                     if (k.IndexOf("[") != -1)
                     {
+                      TypeText= taketype(ObjWorkSheet.Cells[1, jj].Text.ToString());
+                        Regex ob1 = new Regex(TypeText);
                         tempstr = k.Remove(k.IndexOf("["), 1);
+                        if (ob1.IsMatch(tempstr))
                         ObjWorkSheet.Cells[ii, jj] = tempstr;
+                        else
+                        {
+                            Console.WriteLine("according't types...");return;
+                        }
                         jj++;
                     }
                     else if (k.IndexOf("]") != -1)
                     {
-                        tempstr = k.Remove(k.IndexOf("]"), 1);
+                        TypeText = taketype(ObjWorkSheet.Cells[1, jj].Text.ToString());
 
+                        tempstr = k.Remove(k.IndexOf("]"), 1);
+                        Regex ob2 = new Regex(TypeText);
+                        if(ob2.IsMatch(tempstr))
                         ObjWorkSheet.Cells[ii , jj ] = tempstr;
-                        ii++; jj = 1;
+                        else
+                        {
+                            Console.WriteLine("according't types..."); return;
+                        }
+                        ii++; jj = 1; 
                     }
                     else
                     {
-                        ObjWorkSheet.Cells[ii , jj ] = k; jj++;
+                        TypeText = taketype(ObjWorkSheet.Cells[1, jj].Text.ToString());
+
+                        Regex ob3 = new Regex(TypeText);
+                        if (ob3.IsMatch(k))
+                            ObjWorkSheet.Cells[ii, jj] = k;
+                        else
+                        {
+                            Console.WriteLine("according't types..."); return;
+                        }
+
+                        jj++;
+                        
                     }
                 }
-                catch (Exception e) {  }
+                catch (Exception e) { Console.WriteLine(e.Message); }
                 }
             xlWorkBook.Save();
+        }
+        public string taketype(string a)
+        {
+            a = a.Remove(0, a.IndexOf('.'));
+            if (a == ".int") a = @"[0-9]";
+            if (a == ".txt") a = @"[A-z]";
+            if (a == ".date") a = @"[0-9]{1,2}.[0-9]{1,2}.[0-9]{4}";
+            return a;
         }
     public void EndProcessing()
     {
