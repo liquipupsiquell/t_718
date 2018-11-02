@@ -1,0 +1,87 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Requests_DB
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            request r = new request();
+            r.del();
+            r.add();
+            r.sel();
+            r.CrT();
+            r.CrDB();
+            r.avg();
+            r.sum();
+            r.max();
+            r.min();
+            r.sort_inc();
+            r.sort_dec();
+            Console.ReadKey();
+        }
+        
+    }
+    class request:Program
+    {
+        public void del()
+        {
+            Console.WriteLine("Request type DELETE:\nDelete inf from table/DB \nFull removal: Delete <name_database> \nRemove of column: Delete <name_database> <name_table> \nRemoving of 1 element: Delete <name_database> <name_table> <name_column/number_row> \n");
+        }
+        public void add()
+        {
+            Console.WriteLine("Request type UPDATE:\nAdd info in DB: Update <name_database> <name_table> [text1 text2 text3][text4 text5 text6] etc. \n");
+        }
+        public void sel()
+        {
+            Console.WriteLine("Request type SELECT:\nDisplay inf about DB/table\nlist of all tables in DB: Select <name_database>\nAll inf of table: Select <name_database> <name_table>\n");
+        }
+        public void CrT()
+        {
+            Console.WriteLine("Request type CREATE_TABLE\nCreate new table in DB: CreateTable <name_database> <name_for_new_table> agrument1.typesdata argument2.typesdata argument3.typesdata argument4.typesdata\n");
+        }
+        public void CrDB()
+        {
+            Console.WriteLine("Request type CREATE_DATABASE\nCreate new DB: CreateDB <name_for_new_Database>\n");
+        }
+        //Среднее значение
+        public void avg()
+        {
+            Console.WriteLine("Request type AVERAGE\nAverage for a column: Average <name_database> <name_table>\n");
+        }
+        //Сумма
+        public void sum()
+        {
+            Console.WriteLine("Request type AMOUNT\nAmount for a column: Amount <name_database> <name_table>\n");
+        }
+        //Максимальный
+        public void max()
+        {
+            Console.WriteLine("Request type MAX\nMax number in table:Max <name_database> <name_table>\n");
+        }
+        //Минимальный
+        public void min()
+        {
+            Console.WriteLine("Request type MIN\nMin number in table:Min <name_database> <name_table>\n");
+        }
+        //Сортировка по возрастанию
+        public void sort_inc()
+        {
+            Console.WriteLine("Request type SORT_INCREASE\nSort table for increase:Sort_inc <name_database> <name_table>\n");
+        }
+        //Сортировка по убыванию
+        public void sort_dec()
+        {
+            Console.WriteLine("Request type SORT_DECREASE\nSort table for decrease:Sort_dec <name_database> <name_table>\n");
+        }
+    }
+    
+}
+
+
+
+
